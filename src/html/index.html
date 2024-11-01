@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>api-server-01</title>
+</head>
+<body>
+	<h2>api-server-01</h2>
+	<select id="functions"></select><br>
+	<textarea id="call_argument" rows="8" cols="40"></textarea><br>
+	<textarea id="call_result" rows="8" cols="40"></textarea><br>
+	<button id="call_button">Make Call</button>
+
+	<script type="module">
+		import "/api.js"
+		const funcs = document.getElementById("functions")
+		const call_argument = document.getElementById("call_argument")
+		const call_result = document.getElementById("call_result")
+		const call_button = document.getElementById("call_button")
+		for (const name of Object.keys(api.fn)) {
+			funcs.insertAdjacentHTML("beforeend", `<option value="${name}">${name}</option>`)
+		}
+		call_argument.value = JSON.stringify(api.make_arg[funcs.value]())
+		funcs.addEventListener("change", (e) => {
+			call_argument.value = JSON.stringify(api.make_arg[funcs.value]())
+		})
+		call_button.addEventListener("click", (e) => {
+			const arg = JSON.parse(call_argument.value)
+			console.log("make call with: ", arg)
+			api.fn[funcs.value](arg).then((r) => {
+				console.log(r)
+				call_result.value = JSON.stringify(r)
+			})
+		})
+	</script>
+</body>
+</html>
